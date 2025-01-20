@@ -1,0 +1,106 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+
+.header-container {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    width: 1440px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    text-shadow: 2px 2px 4px #000000;
+    transition: height 0.3s ease, padding 0.3s ease;
+}
+
+.header-container.shrink {
+    box-shadow: 0px 0px 10px #000000;
+    height: 60px;
+    padding: 10px;
+}
+
+.spacer {
+    height: 135px;
+}
+
+
+.monster, .monsterArea {
+    background: #1e1e1e;
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.monster img, .monsterArea img, .header-container img {
+    max-width: 70px;
+    height: auto;
+}
+
+button {
+    background: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #555;
+}
+
+button:disabled {
+    background: #555;
+    cursor: not-allowed;
+}
+
+span {
+    display: inline-block;
+    width: 100px;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.timer-class {
+    font-size: 1.2em;
+}
+
+.timer-warning {
+    color: red;
+    font-size: 2em;
+}
+
+#monster-localization {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 150px;
+    transition: max-width 0.3s ease, white-space 0.3s ease;
+}
+
+.monster:hover #monster-localization, 
+.monsterArea:hover #monster-localization {
+    white-space: normal;
+    overflow: visible;
+    max-width: none;
+}
