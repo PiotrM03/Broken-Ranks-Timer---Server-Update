@@ -34,7 +34,7 @@
             <span id="monster-localization">Jaskinia Południowa</span>
             <span class="timer-class" id="monster-respawn">25min - 30min</span>
             <span id="monster-dissapear">8min</span>
-            <button id="start-monster4" onclick="startTimer('monster4', 1500)">Start Timer</button>
+            <button id="start-monster4" onclick="startTimer('monster4', 10)">Start Timer</button>
             <span id="timer-monster4"></span>
             <span id="info-monster4"></span>
             <button onclick="clearInfo('monster4')">Clear Info</button>
@@ -423,7 +423,7 @@
             });
 
     //const socket = new WebSocket('wss://brokenranksbackend.onrender.com');
-    const socket = new WebSocket('https://broken-ranks-timers-backend.onrender.com');
+    const socket = new WebSocket('ws://localhost:3000');
 
     let intervals = {};
 
@@ -431,7 +431,6 @@
     socket.onmessage = (event) => {
         try {
             const data = JSON.parse(event.data); // Parsowanie wiadomości JSON
-
             switch (data.type) {
                 case 'sync':
                     syncTimers(data.timers, data.timerInfo, data.disabledButtons);
@@ -441,6 +440,9 @@
                     break;
                 case 'reset':
                     syncResetTimer(data.monsterId);
+                    break;
+                case 'updateInfo':
+                    document.getElementById('info-' + data.monsterId).textContent = data.info;
                     break;
                 case 'clear':
                     syncClearInfo(data.monsterId);
@@ -488,36 +490,22 @@
 
     function syncStartTimer(monsterId, duration) {
         const timerDisplay = document.getElementById('timer-' + monsterId);
-        const timerInfo = document.getElementById('info-' + monsterId);
         const startButton = document.getElementById('start-' + monsterId);
-        const initialMessage = timerDisplay.textContent;
 
         startButton.disabled = true;
 
         let timer = duration, minutes, seconds;
         intervals[monsterId] = setInterval(function () {
-            minutes = parseInt(timer / 60, 10);
-            seconds = parseInt(timer % 60, 10);
+            minutes = Math.floor(timer / 60).toString().padStart(2, '0');
+            seconds = (timer % 60).toString().padStart(2, '0');
 
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
+            timerDisplay.textContent = `${minutes}:${seconds}`;
+            timer--;
 
-            timerDisplay.textContent = minutes + ":" + seconds;
-
-            if (timer < 300) { 
-                timerDisplay.classList.add('timer-warning');
-            } else {
-                timerDisplay.classList.remove('timer-warning');
-            }
-
-            if (--timer < 0) {
+            if (timer < 0) {
                 clearInterval(intervals[monsterId]);
-                var completionTime = new Date().toLocaleTimeString();
-                timerDisplay.textContent = initialMessage;
-                timerInfo.textContent = "Completed at " + completionTime;
+                timerDisplay.textContent = "Timer completed!";
                 startButton.disabled = false;
-                timerDisplay.classList.remove('timer-warning');
-                updateInfo(monsterId, "Completed at " + completionTime);
             }
         }, 1000);
     }
@@ -528,7 +516,6 @@
         const timerInfo = document.getElementById('info-' + monsterId);
         const startButton = document.getElementById('start-' + monsterId);
         timerDisplay.textContent = "";
-        timerInfo.textContent = "";
         startButton.disabled = false;
         timerDisplay.classList.remove('timer-warning');
     }
